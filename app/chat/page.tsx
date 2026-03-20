@@ -1,8 +1,7 @@
 "use client";
 
 import type { ToolUIPart } from "ai";
-import { CheckIcon, GlobeIcon, MicIcon } from "lucide-react";
-import { nanoid } from "nanoid";
+import { GlobeIcon, MicIcon } from "lucide-react";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
 /**
@@ -47,19 +46,7 @@ import {
   MessageContent,
   MessageResponse,
 } from "@/components/ai-elements/message";
-import {
-  ModelSelector,
-  ModelSelectorContent,
-  ModelSelectorEmpty,
-  ModelSelectorGroup,
-  ModelSelectorInput,
-  ModelSelectorItem,
-  ModelSelectorList,
-  ModelSelectorLogo,
-  ModelSelectorLogoGroup,
-  ModelSelectorName,
-  ModelSelectorTrigger,
-} from "@/components/ai-elements/model-selector";
+
 import {
   PromptInput,
   PromptInputActionAddAttachments,
@@ -111,196 +98,7 @@ interface MessageType {
   }[];
 }
 
-const initialMessages: MessageType[] = [
-  {
-    key: nanoid(),
-    from: "user",
-    versions: [
-      {
-        id: nanoid(),
-        content: "Can you explain how to use React hooks effectively?",
-      },
-    ],
-  },
-  {
-    key: nanoid(),
-    from: "assistant",
-    sources: [
-      {
-        href: "https://react.dev/reference/react",
-        title: "React Documentation",
-      },
-      {
-        href: "https://react.dev/reference/react-dom",
-        title: "React DOM Documentation",
-      },
-    ],
-    versions: [
-      {
-        id: nanoid(),
-        content: `# React Hooks Best Practices
-
-React hooks are a powerful feature that let you use state and other React features without writing classes. Here are some tips for using them effectively:
-
-## Rules of Hooks
-
-1. **Only call hooks at the top level** of your component or custom hooks
-2. **Don't call hooks inside loops, conditions, or nested functions**
-
-## Common Hooks
-
-- **useState**: For local component state
-- **useEffect**: For side effects like data fetching
-- **useContext**: For consuming context
-- **useReducer**: For complex state logic
-- **useCallback**: For memoizing functions
-- **useMemo**: For memoizing values
-
-## Example of useState and useEffect
-
-\`\`\`jsx
-function ProfilePage({ userId }) {
-  const [user, setUser] = useState(null);
-
-  useEffect(() => {
-    // This runs after render and when userId changes
-    fetchUser(userId).then(userData => {
-      setUser(userData);
-    });
-  }, [userId]);
-
-  return user ? <Profile user={user} /> : <Loading />;
-}
-\`\`\`
-
-Would you like me to explain any specific hook in more detail?`,
-      },
-    ],
-  },
-  {
-    key: nanoid(),
-    from: "user",
-    versions: [
-      {
-        id: nanoid(),
-        content:
-          "Yes, could you explain useCallback and useMemo in more detail? When should I use one over the other?",
-      },
-      {
-        id: nanoid(),
-        content:
-          "I'm particularly interested in understanding the performance implications of useCallback and useMemo. Could you break down when each is most appropriate?",
-      },
-      {
-        id: nanoid(),
-        content:
-          "Thanks for the overview! Could you dive deeper into the specific use cases where useCallback and useMemo make the biggest difference in React applications?",
-      },
-    ],
-  },
-  {
-    key: nanoid(),
-    from: "assistant",
-    reasoning: {
-      content: `The user is asking for a detailed explanation of useCallback and useMemo. I should provide a clear and concise explanation of each hook's purpose and how they differ.
-
-The useCallback hook is used to memoize functions to prevent unnecessary re-renders of child components that receive functions as props.
-
-The useMemo hook is used to memoize values to avoid expensive recalculations on every render.
-
-Both hooks help with performance optimization, but they serve different purposes.`,
-      duration: 10,
-    },
-    versions: [
-      {
-        id: nanoid(),
-        content: `## useCallback vs useMemo
-
-Both hooks help with performance optimization, but they serve different purposes:
-
-### useCallback
-
-\`useCallback\` memoizes **functions** to prevent unnecessary re-renders of child components that receive functions as props.
-
-\`\`\`jsx
-// Without useCallback - a new function is created on every render
-const handleClick = () => {
-  console.log(count);
-};
-
-// With useCallback - the function is only recreated when dependencies change
-const handleClick = useCallback(() => {
-  console.log(count);
-}, [count]);
-\`\`\`
-
-### useMemo
-
-\`useMemo\` memoizes **values** to avoid expensive recalculations on every render.
-
-\`\`\`jsx
-// Without useMemo - expensive calculation runs on every render
-const sortedList = expensiveSort(items);
-
-// With useMemo - calculation only runs when items change
-const sortedList = useMemo(() => expensiveSort(items), [items]);
-\`\`\`
-
-### When to use which?
-
-- Use **useCallback** when:
-  - Passing callbacks to optimized child components that rely on reference equality
-  - Working with event handlers that you pass to child components
-
-- Use **useMemo** when:
-  - You have computationally expensive calculations
-  - You want to avoid recreating objects that are used as dependencies for other hooks
-
-### Performance Note
-
-Don't overuse these hooks! They come with their own overhead. Only use them when you have identified a genuine performance issue.`,
-      },
-    ],
-  },
-];
-
-const models = [
-  {
-    id: "gpt-4o",
-    name: "GPT-4o",
-    chef: "OpenAI",
-    chefSlug: "openai",
-    providers: ["openai", "azure"],
-  },
-  {
-    id: "gpt-4o-mini",
-    name: "GPT-4o Mini",
-    chef: "OpenAI",
-    chefSlug: "openai",
-    providers: ["openai", "azure"],
-  },
-  {
-    id: "claude-opus-4-20250514",
-    name: "Claude 4 Opus",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
-    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
-  },
-  {
-    id: "claude-sonnet-4-20250514",
-    name: "Claude 4 Sonnet",
-    chef: "Anthropic",
-    chefSlug: "anthropic",
-    providers: ["anthropic", "azure", "google", "amazon-bedrock"],
-  },
-  {
-    id: "gemini-2.0-flash-exp",
-    name: "Gemini 2.0 Flash",
-    chef: "Google",
-    chefSlug: "google",
-    providers: ["google"],
-  },
-];
+const initialMessages: MessageType[] = [];
 
 const suggestions = [
   "What are the latest trends in AI?",
@@ -311,14 +109,6 @@ const suggestions = [
   "How to optimize database queries?",
   "What is the difference between SQL and NoSQL?",
   "Explain cloud computing basics",
-];
-
-const mockResponses = [
-  "That's a great question! Let me help you understand this concept better. The key thing to remember is that proper implementation requires careful consideration of the underlying principles and best practices in the field.",
-  "I'd be happy to explain this topic in detail. From my understanding, there are several important factors to consider when approaching this problem. Let me break it down step by step for you.",
-  "This is an interesting topic that comes up frequently. The solution typically involves understanding the core concepts and applying them in the right context. Here's what I recommend...",
-  "Great choice of topic! This is something that many developers encounter. The approach I'd suggest is to start with the fundamentals and then build up to more complex scenarios.",
-  "That's definitely worth exploring. From what I can see, the best way to handle this is to consider both the theoretical aspects and practical implementation details.",
 ];
 
 const PromptInputAttachmentsDisplay = () => {
@@ -345,8 +135,6 @@ const PromptInputAttachmentsDisplay = () => {
 };
 
 export function ChatbotDemo() {
-  const [model, setModel] = useState<string>(models[0].id);
-  const [modelSelectorOpen, setModelSelectorOpen] = useState(false);
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
@@ -354,44 +142,56 @@ export function ChatbotDemo() {
     "submitted" | "streaming" | "ready" | "error"
   >("ready");
   const [messages, setMessages] = useState<MessageType[]>(initialMessages);
-  const [_streamingMessageId, setStreamingMessageId] = useState<string | null>(
-    null,
-  );
 
-  const selectedModelData = models.find((m) => m.id === model);
-
-  const streamResponse = useCallback(
-    async (messageId: string, content: string) => {
+  const streamBackendResponse = useCallback(
+    async (
+      messageId: string,
+      payloadMessages: { role: string; content: string }[],
+    ) => {
       setStatus("streaming");
-      setStreamingMessageId(messageId);
 
-      const words = content.split(" ");
-      let currentContent = "";
+      try {
+        const res = await fetch("/api/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ messages: payloadMessages }),
+        });
 
-      for (let i = 0; i < words.length; i++) {
-        currentContent += (i > 0 ? " " : "") + words[i];
+        if (!res.ok || !res.body) {
+          throw new Error("Failed to fetch");
+        }
 
-        setMessages((prev) =>
-          prev.map((msg) => {
-            if (msg.versions.some((v) => v.id === messageId)) {
-              return {
-                ...msg,
-                versions: msg.versions.map((v) =>
-                  v.id === messageId ? { ...v, content: currentContent } : v,
-                ),
-              };
-            }
-            return msg;
-          }),
-        );
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder("utf-8");
+        let currentContent = "";
 
-        await new Promise((resolve) =>
-          setTimeout(resolve, Math.random() * 100 + 50),
-        );
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          const chunkText = decoder.decode(value, { stream: true });
+          currentContent += chunkText;
+
+          setMessages((prev) =>
+            prev.map((msg) => {
+              if (msg.versions.some((v) => v.id === messageId)) {
+                return {
+                  ...msg,
+                  versions: msg.versions.map((v) =>
+                    v.id === messageId ? { ...v, content: currentContent } : v,
+                  ),
+                };
+              }
+              return msg;
+            }),
+          );
+        }
+      } catch (e) {
+        console.error(e);
+        toast.error("An error occurred during chat completion.");
+      } finally {
+        setStatus("ready");
       }
-
-      setStatus("ready");
-      setStreamingMessageId(null);
     },
     [],
   );
@@ -409,13 +209,16 @@ export function ChatbotDemo() {
         ],
       };
 
-      setMessages((prev) => [...prev, userMessage]);
+      setMessages((prev) => {
+        const newMessages = [...prev, userMessage];
 
-      setTimeout(() => {
+        // Prepare messages for the API call
+        const payloadMessages = newMessages.map((msg) => ({
+          role: msg.from === "user" ? "user" : "assistant",
+          content: msg.versions[msg.versions.length - 1].content,
+        }));
+
         const assistantMessageId = `assistant-${Date.now()}`;
-        const randomResponse =
-          mockResponses[Math.floor(Math.random() * mockResponses.length)];
-
         const assistantMessage: MessageType = {
           key: `assistant-${Date.now()}`,
           from: "assistant",
@@ -427,11 +230,18 @@ export function ChatbotDemo() {
           ],
         };
 
-        setMessages((prev) => [...prev, assistantMessage]);
-        streamResponse(assistantMessageId, randomResponse);
-      }, 500);
+        const finalMessages = [...newMessages, assistantMessage];
+
+        // Start backend fetch AFTER setting the state to show the message immediately
+        setTimeout(
+          () => streamBackendResponse(assistantMessageId, payloadMessages),
+          0,
+        );
+
+        return finalMessages;
+      });
     },
-    [streamResponse],
+    [streamBackendResponse],
   );
 
   const handleSubmit = (message: PromptInputMessage) => {
@@ -502,7 +312,9 @@ export function ChatbotDemo() {
                 ))}
               </MessageBranchContent>
               {versions.length > 1 && (
-                <MessageBranchSelector className={message.from === "user" ? "ml-auto" : ""}>
+                <MessageBranchSelector
+                  className={message.from === "user" ? "ml-auto" : ""}
+                >
                   <MessageBranchPrevious />
                   <MessageBranchPage />
                   <MessageBranchNext />
@@ -514,15 +326,6 @@ export function ChatbotDemo() {
         <ConversationScrollButton />
       </Conversation>
       <div className="shrink-0 space-y-4 pt-4">
-        <Suggestions className="px-4">
-          {suggestions.map((suggestion) => (
-            <Suggestion
-              key={suggestion}
-              onClick={() => handleSuggestionClick(suggestion)}
-              suggestion={suggestion}
-            />
-          ))}
-        </Suggestions>
         <div className="w-full px-4 pb-4">
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
             <PromptInputHeader>
@@ -556,63 +359,6 @@ export function ChatbotDemo() {
                   <GlobeIcon size={16} />
                   <span>Search</span>
                 </PromptInputButton>
-                <ModelSelector
-                  onOpenChange={setModelSelectorOpen}
-                  open={modelSelectorOpen}
-                >
-                  <ModelSelectorTrigger asChild>
-                    <PromptInputButton>
-                      {selectedModelData?.chefSlug && (
-                        <ModelSelectorLogo
-                          provider={selectedModelData.chefSlug}
-                        />
-                      )}
-                      {selectedModelData?.name && (
-                        <ModelSelectorName>
-                          {selectedModelData.name}
-                        </ModelSelectorName>
-                      )}
-                    </PromptInputButton>
-                  </ModelSelectorTrigger>
-                  <ModelSelectorContent>
-                    <ModelSelectorInput placeholder="Search models..." />
-                    <ModelSelectorList>
-                      <ModelSelectorEmpty>No models found.</ModelSelectorEmpty>
-                      {["OpenAI", "Anthropic", "Google"].map((chef) => (
-                        <ModelSelectorGroup heading={chef} key={chef}>
-                          {models
-                            .filter((m) => m.chef === chef)
-                            .map((m) => (
-                              <ModelSelectorItem
-                                key={m.id}
-                                onSelect={() => {
-                                  setModel(m.id);
-                                  setModelSelectorOpen(false);
-                                }}
-                                value={m.id}
-                              >
-                                <ModelSelectorLogo provider={m.chefSlug} />
-                                <ModelSelectorName>{m.name}</ModelSelectorName>
-                                <ModelSelectorLogoGroup>
-                                  {m.providers.map((provider) => (
-                                    <ModelSelectorLogo
-                                      key={provider}
-                                      provider={provider}
-                                    />
-                                  ))}
-                                </ModelSelectorLogoGroup>
-                                {model === m.id ? (
-                                  <CheckIcon className="ml-auto size-4" />
-                                ) : (
-                                  <div className="ml-auto size-4" />
-                                )}
-                              </ModelSelectorItem>
-                            ))}
-                        </ModelSelectorGroup>
-                      ))}
-                    </ModelSelectorList>
-                  </ModelSelectorContent>
-                </ModelSelector>
               </PromptInputTools>
               <PromptInputSubmit
                 disabled={!(text.trim() || status) || status === "streaming"}
