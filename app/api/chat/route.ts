@@ -25,14 +25,17 @@ export async function POST(req: NextRequest) {
       headers: {
         "Content-Type": response.headers.get("Content-Type") || "text/plain",
         "Cache-Control": "no-cache",
-        "Connection": "keep-alive",
+        Connection: "keep-alive",
       },
     });
   } catch (error) {
     console.error("Error communicating with backend:", error);
-    return new Response(JSON.stringify({ error: "Failed to connect to backend" }), {
-      status: 500,
-      headers: { "Content-Type": "application/json" },
-    });
+    return new Response(
+      JSON.stringify({ error: "Failed to connect to backend" }),
+      {
+        status: 500,
+        headers: { "Content-Type": "application/json" },
+      },
+    );
   }
 }
