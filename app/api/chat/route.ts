@@ -19,11 +19,12 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    // Proxy the stream back to the client
+    // Proxy the stream back to the client, forwarding Vercel AI Data Stream Protocol headers
     return new Response(response.body, {
       status: 200,
       headers: {
-        "Content-Type": response.headers.get("Content-Type") || "text/plain",
+        "Content-Type": "text/plain; charset=utf-8",
+        "x-vercel-ai-data-stream": "v1",
         "Cache-Control": "no-cache",
         Connection: "keep-alive",
       },
