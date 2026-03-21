@@ -2,19 +2,22 @@
 
 import { ChatInterface } from "@/components/chat/chat-interface";
 import { GenerativeUIViewer } from "@/components/chat/generative-ui-viewer";
+import {
+  ResizableHandle,
+  ResizablePanel,
+  ResizablePanelGroup,
+} from "@/components/ui/resizable";
 
 export default function ChatPage() {
   return (
-    <div className="fixed inset-0 flex overflow-hidden">
-      {/* Left side: Chat interface */}
-      <div className="flex w-1/2 flex-col border-r">
+    <ResizablePanelGroup orientation="horizontal">
+      <ResizablePanel defaultSize="50%">
         <ChatInterface />
-      </div>
-
-      {/* Right side: Generated UI */}
-      <div className="flex w-1/2 flex-col flex-1">
+      </ResizablePanel>
+      <ResizableHandle withHandle />
+      <ResizablePanel defaultSize="50%">
         <GenerativeUIViewer />
-      </div>
-    </div>
+      </ResizablePanel>
+    </ResizablePanelGroup>
   );
 }

@@ -181,7 +181,7 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex h-full w-full flex-col">
+    <div className="flex h-screen w-full flex-col">
       <Conversation className="min-h-0 flex-1 border-b">
         <ConversationContent>
           {messages.map(({ versions, ...message }) => (
