@@ -1,9 +1,11 @@
 "use client";
 
 import type { ToolUIPart } from "ai";
+import { DefaultChatTransport } from "ai";
 import { GlobeIcon, MicIcon } from "lucide-react";
-import { useCallback, useState } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useChat } from "@ai-sdk/react";
 /**
  * @title React AI Chatbot
  * @credit {"name": "Vercel", "url": "https://ai-sdk.dev/elements", "license": {"name": "Apache License 2.0", "url": "https://www.apache.org/licenses/LICENSE-2.0"}}
@@ -98,8 +100,6 @@ interface MessageType {
   }[];
 }
 
-const initialMessages: MessageType[] = [];
-
 const suggestions = [
   "What are the latest trends in AI?",
   "How does machine learning work?",
@@ -138,110 +138,32 @@ export function ChatbotDemo() {
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
-  const [status, setStatus] = useState<
-    "submitted" | "streaming" | "ready" | "error"
-  >("ready");
-  const [messages, setMessages] = useState<MessageType[]>(initialMessages);
 
-  const streamBackendResponse = useCallback(
-    async (
-      messageId: string,
-      payloadMessages: { role: string; content: string }[],
-    ) => {
-      setStatus("streaming");
+  const { messages: sdkMessages, sendMessage, status } = useChat({
+    transport: new DefaultChatTransport({ api: "/api/chat" }),
+  });
 
-      try {
-        const res = await fetch("/api/chat", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ messages: payloadMessages }),
-        });
-
-        if (!res.ok || !res.body) {
-          throw new Error("Failed to fetch");
-        }
-
-        const reader = res.body.getReader();
-        const decoder = new TextDecoder("utf-8");
-        let currentContent = "";
-
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-
-          const chunkText = decoder.decode(value, { stream: true });
-          currentContent += chunkText;
-
-          setMessages((prev) =>
-            prev.map((msg) => {
-              if (msg.versions.some((v) => v.id === messageId)) {
-                return {
-                  ...msg,
-                  versions: msg.versions.map((v) =>
-                    v.id === messageId ? { ...v, content: currentContent } : v,
-                  ),
-                };
-              }
-              return msg;
-            }),
-          );
-        }
-      } catch (e) {
-        console.error(e);
-        toast.error("An error occurred during chat completion.");
-      } finally {
-        setStatus("ready");
-      }
-    },
-    [],
-  );
-
-  const addUserMessage = useCallback(
-    (content: string) => {
-      const userMessage: MessageType = {
-        key: `user-${Date.now()}`,
-        from: "user",
-        versions: [
-          {
-            id: `user-${Date.now()}`,
-            content,
-          },
-        ],
-      };
-
-      setMessages((prev) => {
-        const newMessages = [...prev, userMessage];
-
-        // Prepare messages for the API call
-        const payloadMessages = newMessages.map((msg) => ({
-          role: msg.from === "user" ? "user" : "assistant",
-          content: msg.versions[msg.versions.length - 1].content,
-        }));
-
-        const assistantMessageId = `assistant-${Date.now()}`;
-        const assistantMessage: MessageType = {
-          key: `assistant-${Date.now()}`,
-          from: "assistant",
+  const messages: MessageType[] = useMemo(
+    () =>
+      sdkMessages
+        .filter(
+          (msg): msg is typeof msg & { role: "user" | "assistant" } =>
+            msg.role === "user" || msg.role === "assistant",
+        )
+        .map((msg) => ({
+          key: msg.id,
+          from: msg.role,
           versions: [
             {
-              id: assistantMessageId,
-              content: "",
+              id: msg.id,
+              content: msg.parts
+                .filter((p) => p.type === "text")
+                .map((p) => p.text)
+                .join(""),
             },
           ],
-        };
-
-        const finalMessages = [...newMessages, assistantMessage];
-
-        // Start backend fetch AFTER setting the state to show the message immediately
-        setTimeout(
-          () => streamBackendResponse(assistantMessageId, payloadMessages),
-          0,
-        );
-
-        return finalMessages;
-      });
-    },
-    [streamBackendResponse],
+        })),
+    [sdkMessages],
   );
 
   const handleSubmit = (message: PromptInputMessage) => {
@@ -252,21 +174,18 @@ export function ChatbotDemo() {
       return;
     }
 
-    setStatus("submitted");
-
     if (message.files?.length) {
       toast.success("Files attached", {
         description: `${message.files.length} file(s) attached to message`,
       });
     }
 
-    addUserMessage(message.text || "Sent with attachments");
+    sendMessage({ text: message.text || "Sent with attachments" });
     setText("");
   };
 
   const handleSuggestionClick = (suggestion: string) => {
-    setStatus("submitted");
-    addUserMessage(suggestion);
+    sendMessage({ text: suggestion });
   };
 
   return (
