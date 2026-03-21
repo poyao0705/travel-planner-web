@@ -139,20 +139,25 @@ export function ChatbotDemo() {
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
 
-  const { messages: sdkMessages, sendMessage, status } = useChat({
+  const {
+    messages: sdkMessages,
+    sendMessage,
+    status,
+  } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
     onFinish: (message) => {
       console.log("Finished receiving message from backend:", message);
     },
     onError: (error) => {
       console.error("Error from backend:", error);
-    }
+    },
   });
 
   const messages: MessageType[] = useMemo(() => {
     return sdkMessages
-      .filter((msg): msg is typeof msg & { role: "user" | "assistant" } =>
-        msg.role === "user" || msg.role === "assistant"
+      .filter(
+        (msg): msg is typeof msg & { role: "user" | "assistant" } =>
+          msg.role === "user" || msg.role === "assistant",
       )
       .map((msg) => {
         let textContent = "";
@@ -175,7 +180,7 @@ export function ChatbotDemo() {
 
         return {
           key: msg.id,
-          from: msg.role as 'user' | 'assistant',
+          from: msg.role as "user" | "assistant",
           sources: sources.length > 0 ? sources : undefined,
           reasoning,
           versions: [
