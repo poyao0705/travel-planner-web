@@ -88,7 +88,7 @@ interface MessageType {
   }[];
   reasoning?: {
     content: string;
-    duration: number;
+    duration?: number;
   };
   tools?: {
     name: string;
@@ -169,7 +169,7 @@ export function ChatbotDemo() {
             if (p.type === "text") {
               textContent += p.text;
             } else if (p.type === "reasoning") {
-              reasoning = { content: p.text, duration: 0 };
+              reasoning = { content: p.text, duration: undefined };
             } else if (p.type === "source-url") {
               sources.push({ href: p.url, title: p.title || p.url });
             } else if (p.type === "source-document") {
