@@ -141,11 +141,18 @@ export function ChatbotDemo() {
 
   const { messages: sdkMessages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
+    onFinish: (message) => {
+      console.log("Finished receiving message from backend:", message);
+    },
+    onError: (error) => {
+      console.error("Error from backend:", error);
+    }
   });
-
   const messages: MessageType[] = useMemo(
-    () =>
-      sdkMessages
+    () => {
+      console.log('--- ALL SDK MESSAGES ---');
+      console.dir(sdkMessages, { depth: null });
+      return sdkMessages
         .filter(
           (msg): msg is typeof msg & { role: "user" | "assistant" } =>
             msg.role === "user" || msg.role === "assistant",
@@ -157,12 +164,15 @@ export function ChatbotDemo() {
             {
               id: msg.id,
               content: msg.parts
-                .filter((p) => p.type === "text")
-                .map((p) => p.text)
-                .join(""),
+                ? msg.parts
+                    .filter((p) => p.type === "text")
+                    .map((p) => p.text)
+                    .join("")
+                : "",
             },
           ],
-        })),
+        }));
+    },
     [sdkMessages],
   );
 
