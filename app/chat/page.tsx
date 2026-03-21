@@ -148,33 +148,45 @@ export function ChatbotDemo() {
       console.error("Error from backend:", error);
     }
   });
-  const messages: MessageType[] = useMemo(
-    () => {
-      console.log('--- ALL SDK MESSAGES ---');
-      console.dir(sdkMessages, { depth: null });
-      return sdkMessages
-        .filter(
-          (msg): msg is typeof msg & { role: "user" | "assistant" } =>
-            msg.role === "user" || msg.role === "assistant",
-        )
-        .map((msg) => ({
+
+  const messages: MessageType[] = useMemo(() => {
+    return sdkMessages
+      .filter((msg): msg is typeof msg & { role: "user" | "assistant" } =>
+        msg.role === "user" || msg.role === "assistant"
+      )
+      .map((msg) => {
+        let textContent = "";
+        let reasoning: MessageType["reasoning"] = undefined;
+        let sources: MessageType["sources"] = [];
+
+        if (msg.parts) {
+          for (const p of msg.parts) {
+            if (p.type === "text") {
+              textContent += p.text;
+            } else if (p.type === "reasoning") {
+              reasoning = { content: p.text, duration: 0 };
+            } else if (p.type === "source-url") {
+              sources.push({ href: p.url, title: p.title || p.url });
+            } else if (p.type === "source-document") {
+              sources.push({ href: p.filename || p.sourceId, title: p.title });
+            }
+          }
+        }
+
+        return {
           key: msg.id,
-          from: msg.role,
+          from: msg.role as 'user' | 'assistant',
+          sources: sources.length > 0 ? sources : undefined,
+          reasoning,
           versions: [
             {
               id: msg.id,
-              content: msg.parts
-                ? msg.parts
-                    .filter((p) => p.type === "text")
-                    .map((p) => p.text)
-                    .join("")
-                : "",
+              content: textContent,
             },
           ],
-        }));
-    },
-    [sdkMessages],
-  );
+        };
+      });
+  }, [sdkMessages]);
 
   const handleSubmit = (message: PromptInputMessage) => {
     const hasText = Boolean(message.text);
