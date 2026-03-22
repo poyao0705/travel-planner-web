@@ -1,6 +1,8 @@
+import { LatLngExpression } from "leaflet";
+
 export type UIBlock = {
   type: "map";
-  center: [number, number];
+  center: LatLngExpression;
   zoom: number;
-  markers?: { position: [number, number]; label?: string }[];
+  markers?: { position: LatLngExpression; label?: string }[];
 };

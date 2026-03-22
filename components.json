@@ -28,6 +28,7 @@
       "headers": {
         "Authorization": "Bearer ${ACETERNITY_API_KEY}"
       }
-    }
+    },
+    "@shadcn-map": "http://shadcn-map.vercel.app/r/{name}.json"
   }
 }

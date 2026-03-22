@@ -122,17 +122,10 @@ export function ChatInterface() {
     transport: new DefaultChatTransport({ api: "/api/chat" }),
     onFinish: (message) => {
       console.log("Finished receiving message from backend:", message);
-      // TODO: implement when the backend supports sending UI blocks as part of the message. We can extract the UI block from the message and update the corresponding state, such as the map state for a map UI block.
-      // const uiBlock = extractUIBlock(message);
-
-      // if (!uiBlock) return;
-
-      // if (uiBlock.type === "map") {
-      //   setMapState(uiBlock);
-      // }
+      // TODO: Testing
       dispatchUI({
         type: "map",
-        center: [-74.006, 40.7128],
+        center: [43.6532, -79.3832],
         zoom: 12,
       });
     },
