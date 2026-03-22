@@ -1,7 +1,7 @@
 "use client";
 
 import { ChatInterface } from "@/components/chat/chat-interface";
-import { GenerativeUIViewer } from "@/components/chat/generative-ui-viewer";
+import { GenerativeUIViewer } from "@/components/gen-ui/generative-ui-viewer";
 import {
   ResizableHandle,
   ResizablePanel,
@@ -10,12 +10,18 @@ import {
 
 export default function ChatPage() {
   return (
-    <ResizablePanelGroup orientation="horizontal">
-      <ResizablePanel defaultSize="50%">
+    <ResizablePanelGroup className="min-h-0 flex-1" orientation="horizontal">
+      <ResizablePanel
+        className="flex min-h-0 flex-col overflow-hidden"
+        defaultSize="50%"
+      >
         <ChatInterface />
       </ResizablePanel>
       <ResizableHandle withHandle />
-      <ResizablePanel defaultSize="50%">
+      <ResizablePanel
+        className="flex min-h-0 flex-col overflow-hidden"
+        defaultSize="50%"
+      >
         <GenerativeUIViewer />
       </ResizablePanel>
     </ResizablePanelGroup>

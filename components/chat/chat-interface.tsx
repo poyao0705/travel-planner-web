@@ -181,8 +181,8 @@ export function ChatInterface() {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col">
-      <Conversation className="min-h-0 flex-1 border-b">
+    <div className="flex h-full min-h-0 w-full flex-col overflow-hidden bg-background">
+      <Conversation className="min-h-0 flex-1">
         <ConversationContent>
           {messages.map(({ versions, ...message }) => (
             <MessageBranch defaultBranch={0} key={message.key}>
@@ -236,8 +236,8 @@ export function ChatInterface() {
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-      <div className="shrink-0 space-y-4 pt-4">
-        <div className="w-full px-4 pb-4">
+      <div className="shrink-0 border-t bg-background px-4 py-4">
+        <div className="w-full">
           <PromptInput globalDrop multiple onSubmit={handleSubmit}>
             <PromptInputHeader>
               <PromptInputAttachmentsDisplay />
