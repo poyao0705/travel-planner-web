@@ -44,7 +44,9 @@ function getSystemTheme(): Theme {
 }
 
 function useResolvedTheme(themeProp?: "light" | "dark"): Theme {
-  const [detectedTheme, setDetectedTheme] = useState<Theme>(themeProp ?? "light");
+  const [detectedTheme, setDetectedTheme] = useState<Theme>(
+    themeProp ?? "light",
+  );
 
   useEffect(() => {
     if (themeProp) {
@@ -317,10 +319,7 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     const canDiffStyles =
       typeof newStyle !== "string" && typeof previousStyle !== "string";
 
-    mapInstance.setStyle(
-      newStyle,
-      canDiffStyles ? { diff: true } : undefined,
-    );
+    mapInstance.setStyle(newStyle, canDiffStyles ? { diff: true } : undefined);
   }, [mapInstance, resolvedTheme, mapStyles, clearStyleTimeout]);
 
   const contextValue = useMemo(
