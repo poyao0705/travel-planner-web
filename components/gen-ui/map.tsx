@@ -8,7 +8,7 @@ import {
 
 // import { Map, MapControls } from "@/components/ui/map";
 import { Card } from "@/components/ui/card";
-import { mapAtom } from "@/state/mapAtom";
+import { mapAtom } from "@/state/atoms/mapAtom";
 import { useAtomValue } from "jotai";
 
 export function MapComponent() {

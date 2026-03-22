@@ -1,5 +1,5 @@
 import { atom, Getter, Setter } from "jotai";
-import { uiRegistry } from "./uiRegistry";
+import { uiRegistry } from "../registry/uiRegistry";
 import { UIBlock } from "@/types/ui-schema";
 
 type Registry = typeof uiRegistry;

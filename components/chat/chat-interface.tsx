@@ -7,7 +7,7 @@ import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useChat } from "@ai-sdk/react";
 import { useSetAtom } from "jotai";
-import { uiDispatcherAtom } from "@/lib/ui-extractor/useUIDispatcher";
+import { uiDispatcherAtom } from "@/state/actions/uiDispatcherAtom";
 
 import {
   Attachment,
