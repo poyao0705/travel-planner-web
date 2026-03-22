@@ -6,7 +6,8 @@ import { GlobeIcon, MicIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useChat } from "@ai-sdk/react";
-import { useUIDispatcher } from "@/lib/ui-extractor/useUIDispatcher";
+import { useSetAtom } from "jotai";
+import { uiDispatcherAtom } from "@/lib/ui-extractor/useUIDispatcher";
 
 import {
   Attachment,
@@ -104,15 +105,11 @@ const PromptInputAttachmentsDisplay = () => {
   );
 };
 
-function extractUIBlock(message: MessageType): ToolUIPart | undefined {
-  return undefined;
-}
-
 export function ChatInterface() {
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
-  const dispatchUI = useUIDispatcher();
+  const dispatchUI = useSetAtom(uiDispatcherAtom);
 
   const {
     messages: sdkMessages,
