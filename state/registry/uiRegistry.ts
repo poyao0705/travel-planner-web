@@ -1,10 +1,10 @@
 import { mapAtom } from "@/state/atoms/mapAtom";
-// import { chartAtom } from "@/state/chartAtom";
+// import { planAtom } from "@/state/atoms/planAtom";
 import { UIBlock } from "@/types/ui-schema";
 
 export const uiRegistry = {
   map: mapAtom,
-  //   chart: chartAtom,
+  // plan: planAtom,
 } satisfies {
   [K in UIBlock["type"]]: any;
 };
