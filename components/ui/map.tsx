@@ -45,16 +45,11 @@ function getSystemTheme(): Theme {
 
 function useResolvedTheme(themeProp?: "light" | "dark"): Theme {
   const [detectedTheme, setDetectedTheme] = useState<Theme>(
-    themeProp ?? "light",
+    () => getDocumentTheme() ?? getSystemTheme(),
   );
 
   useEffect(() => {
-    if (themeProp) {
-      setDetectedTheme(themeProp);
-      return;
-    }
-
-    setDetectedTheme(getDocumentTheme() ?? getSystemTheme());
+    if (themeProp) return; // Skip detection if theme is provided via prop
 
     // Watch for document class changes (e.g., next-themes toggling dark class)
     const observer = new MutationObserver(() => {
@@ -312,14 +307,10 @@ const Map = forwardRef<MapRef, MapProps>(function Map(
     if (currentStyleRef.current === newStyle) return;
 
     clearStyleTimeout();
-    const previousStyle = currentStyleRef.current;
     currentStyleRef.current = newStyle;
     setIsStyleLoaded(false);
 
-    const canDiffStyles =
-      typeof newStyle !== "string" && typeof previousStyle !== "string";
-
-    mapInstance.setStyle(newStyle, canDiffStyles ? { diff: true } : undefined);
+    mapInstance.setStyle(newStyle, { diff: true });
   }, [mapInstance, resolvedTheme, mapStyles, clearStyleTimeout]);
 
   const contextValue = useMemo(
