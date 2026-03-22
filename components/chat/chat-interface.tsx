@@ -6,6 +6,7 @@ import { GlobeIcon, MicIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useChat } from "@ai-sdk/react";
+import { useUIDispatcher } from "@/lib/ui-extractor/useUIDispatcher";
 
 import {
   Attachment,
@@ -103,10 +104,15 @@ const PromptInputAttachmentsDisplay = () => {
   );
 };
 
+function extractUIBlock(message: MessageType): ToolUIPart | undefined {
+  return undefined;
+}
+
 export function ChatInterface() {
   const [text, setText] = useState<string>("");
   const [useWebSearch, setUseWebSearch] = useState<boolean>(false);
   const [useMicrophone, setUseMicrophone] = useState<boolean>(false);
+  const dispatchUI = useUIDispatcher();
 
   const {
     messages: sdkMessages,
@@ -116,6 +122,19 @@ export function ChatInterface() {
     transport: new DefaultChatTransport({ api: "/api/chat" }),
     onFinish: (message) => {
       console.log("Finished receiving message from backend:", message);
+      // TODO: implement when the backend supports sending UI blocks as part of the message. We can extract the UI block from the message and update the corresponding state, such as the map state for a map UI block.
+      // const uiBlock = extractUIBlock(message);
+
+      // if (!uiBlock) return;
+
+      // if (uiBlock.type === "map") {
+      //   setMapState(uiBlock);
+      // }
+      dispatchUI({
+        type: "map",
+        center: [-74.006, 40.7128],
+        zoom: 12,
+      });
     },
     onError: (error) => {
       console.error("Error from backend:", error);
