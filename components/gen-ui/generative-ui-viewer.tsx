@@ -8,7 +8,6 @@ export function GenerativeUIViewer() {
           UI components will be generated here
         </p> */}
           <MapComponent />
-          <p>Hi</p>
         </div>
       </div>
     </div>

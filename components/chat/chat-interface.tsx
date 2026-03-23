@@ -1,13 +1,15 @@
 "use client";
 
-import type { ToolUIPart } from "ai";
+import type { ToolUIPart, UIMessage } from "ai";
 import { DefaultChatTransport } from "ai";
 import { GlobeIcon, MicIcon } from "lucide-react";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 import { useChat } from "@ai-sdk/react";
 import { useSetAtom } from "jotai";
+import { z } from "zod";
 import { uiDispatcherAtom } from "@/state/actions/uiDispatcherAtom";
+import { UIBlockSchema } from "@/types/ui-schema";
 
 import {
   Attachment,
@@ -82,6 +84,28 @@ interface MessageType {
   }[];
 }
 
+const BackendMapDataSchema = z.object({
+  center: z.tuple([z.number(), z.number()]),
+  zoom: z.number(),
+  displayName: z.string().optional(),
+  query: z.string().optional(),
+});
+
+const BackendUIDataSchema = z
+  .object({
+    map: BackendMapDataSchema.optional(),
+    plan: z.unknown().optional(),
+  })
+  .refine((data) => data.map !== undefined || data.plan !== undefined, {
+    message: "Expected at least one UI payload",
+  });
+
+type ChatDataParts = {
+  "ui-data": z.infer<typeof BackendUIDataSchema>;
+};
+
+type ChatMessage = UIMessage<never, ChatDataParts>;
+
 const PromptInputAttachmentsDisplay = () => {
   const attachments = usePromptInputAttachments();
 
@@ -115,16 +139,47 @@ export function ChatInterface() {
     messages: sdkMessages,
     sendMessage,
     status,
-  } = useChat({
+  } = useChat<ChatMessage>({
     transport: new DefaultChatTransport({ api: "/api/chat" }),
-    onFinish: (message) => {
+    dataPartSchemas: {
+      "ui-data": BackendUIDataSchema,
+    },
+    onData: (part) => {
+      if (part.type !== "data-ui-data") {
+        return;
+      }
+
+      if (part.data.map) {
+        const uiBlock = UIBlockSchema.safeParse({
+          type: "map",
+          center: part.data.map.center,
+          zoom: part.data.map.zoom,
+        });
+
+        if (!uiBlock.success) {
+          console.error("Invalid map UI block from backend:", uiBlock.error);
+          return;
+        }
+
+        dispatchUI(uiBlock.data);
+      }
+
+      if (part.data.plan !== undefined) {
+        const uiBlock = UIBlockSchema.safeParse({
+          type: "plan",
+          data: part.data.plan,
+        });
+
+        if (!uiBlock.success) {
+          console.error("Invalid plan UI block from backend:", uiBlock.error);
+          return;
+        }
+
+        dispatchUI(uiBlock.data);
+      }
+    },
+    onFinish: ({ message }) => {
       console.log("Finished receiving message from backend:", message);
-      // TODO: Testing
-      dispatchUI({
-        type: "map",
-        center: [43.6532, -79.3832],
-        zoom: 12,
-      });
     },
     onError: (error) => {
       console.error("Error from backend:", error);
