@@ -1,7 +1,8 @@
 import { UIBlock } from "@/types/ui-schema";
 import { atom } from "jotai";
 import { mapAtom } from "@/state/atoms/mapAtom";
-// import { planAtom } from "@/state/atoms/planAtom";
+
+// export const planAtom = atom<UIBlock | undefined>(undefined);
 
 export const uiAtom = atom((get) => ({
   map: get(mapAtom),
