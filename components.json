@@ -22,7 +22,6 @@
     "hooks": "@/hooks"
   },
   "registries": {
-    "@mapcn": "https://mapcn.dev/r/{name}.json",
     "@aceternity": {
       "url": "https://ui.aceternity.com/registry/{name}.json",
       "headers": {

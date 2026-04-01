@@ -4,14 +4,7 @@ import { UIBlock } from "@/types/ui-schema";
 
 type Registry = typeof uiRegistry;
 
-export const uiDispatcherAtom = atom(
-  null,
-  <K extends keyof Registry>(
-    get: Getter,
-    set: Setter,
-    ui: Extract<UIBlock, { type: K }>,
-  ) => {
-    const targetAtom = uiRegistry[ui.type];
-    set(targetAtom, ui);
-  },
-);
+export const uiDispatcherAtom = atom(null, (get, set, ui: UIBlock) => {
+  const targetAtom = uiRegistry[ui.type];
+  set(targetAtom, ui);
+});

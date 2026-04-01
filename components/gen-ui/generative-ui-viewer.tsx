@@ -7,7 +7,7 @@ export function GenerativeUIViewer() {
           {/* <p className="text-muted-foreground">
           UI components will be generated here
         </p> */}
-          {/* <MapComponent /> */}
+          <MapComponent />
         </div>
       </div>
     </div>
