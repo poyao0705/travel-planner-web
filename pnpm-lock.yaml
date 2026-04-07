@@ -132,6 +132,9 @@ importers:
       '@types/geojson':
         specifier: ^7946.0.16
         version: 7946.0.16
+      '@types/google.maps':
+        specifier: ^3.58.1
+        version: 3.58.1
       '@types/leaflet':
         specifier: ^1.9.21
         version: 1.9.21

@@ -1,6 +1,8 @@
 import { z } from "zod";
 
-export const LatLngTupleSchema = z.tuple([z.number(), z.number()]);
+export const LatLngTupleSchema = z
+  .tuple([z.number(), z.number()])
+  .transform(([lat, lng]) => ({ lat, lng }));
 
 export const MapMarkerSchema = z.object({
   position: LatLngTupleSchema,
