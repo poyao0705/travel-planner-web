@@ -195,7 +195,7 @@ export function ChatInterface() {
       .map((msg) => {
         let textContent = "";
         let reasoning: MessageType["reasoning"] = undefined;
-        let sources: MessageType["sources"] = [];
+        const sources: MessageType["sources"] = [];
 
         if (msg.parts) {
           for (const p of msg.parts) {

@@ -10,10 +10,17 @@
 import { Card } from "@/components/ui/card";
 import { mapAtom } from "@/state/atoms/mapAtom";
 import { useAtomValue } from "jotai";
-import { APIProvider, Map, Marker, useMap } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  AdvancedMarker,
+  Marker,
+  useMap,
+} from "@vis.gl/react-google-maps";
 import { useEffect } from "react";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY as string;
+const MAP_ID = process.env.NEXT_PUBLIC_GOOGLE_MAPS_MAP_ID;
 
 // TODO: tests
 const markers = [
@@ -67,11 +74,16 @@ export function MapComponent() {
           defaultCenter={{ lat: 22.54992, lng: 0 }}
           gestureHandling={"greedy"}
           disableDefaultUI={false}
+          mapId={MAP_ID}
         >
           <MapController />
-          {markers.map((position, i) => (
-            <Marker key={i} position={position} />
-          ))}
+          {markers.map((position, i) =>
+            MAP_ID ? (
+              <AdvancedMarker key={i} position={position} />
+            ) : (
+              <Marker key={i} position={position} />
+            ),
+          )}
         </Map>
       </APIProvider>
     </Card>

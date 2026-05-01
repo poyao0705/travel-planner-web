@@ -2,8 +2,18 @@
 import { cn } from "@/lib/utils";
 import { IconMenu2, IconX } from "@tabler/icons-react";
 import { motion, AnimatePresence } from "motion/react";
+import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+
+type NavItem = {
+  name: string;
+  link: string;
+};
+
+type NavProps = {
+  navItems: NavItem[];
+};
 
 export default function SimpleNavbarWithHoverEffects() {
   return (
@@ -29,7 +39,7 @@ const Navbar = () => {
   );
 };
 
-const DesktopNav = ({ navItems }: any) => {
+const DesktopNav = ({ navItems }: NavProps) => {
   const [hovered, setHovered] = useState<number | null>(null);
   return (
     <motion.div
@@ -37,13 +47,13 @@ const DesktopNav = ({ navItems }: any) => {
         setHovered(null);
       }}
       className={cn(
-        "relative z-[60] mx-auto hidden w-full flex-row items-center justify-between self-start bg-white px-4 py-2 lg:flex dark:bg-neutral-950",
+        "relative z-60 mx-auto hidden w-full flex-row items-center justify-between self-start bg-white px-4 py-2 lg:flex dark:bg-neutral-950",
         "sticky inset-x-0 top-0",
       )}
     >
       <Logo />
       <div className="hidden flex-1 flex-row items-center justify-center space-x-2 text-sm font-medium text-zinc-600 transition duration-200 hover:text-zinc-800 lg:flex lg:space-x-2">
-        {navItems.map((navItem: any, idx: number) => (
+        {navItems.map((navItem, idx) => (
           <Link
             onMouseEnter={() => setHovered(idx)}
             className="relative px-4 py-2 text-neutral-600 dark:text-neutral-300"
@@ -67,7 +77,7 @@ const DesktopNav = ({ navItems }: any) => {
   );
 };
 
-const MobileNav = ({ navItems }: any) => {
+const MobileNav = ({ navItems }: NavProps) => {
   const [open, setOpen] = useState(false);
 
   return (
@@ -99,7 +109,7 @@ const MobileNav = ({ navItems }: any) => {
               exit={{ opacity: 0 }}
               className="absolute inset-x-0 top-16 z-20 flex w-full flex-col items-start justify-start gap-4 rounded-lg bg-white px-4 py-8 dark:bg-neutral-950"
             >
-              {navItems.map((navItem: any, idx: number) => (
+              {navItems.map((navItem, idx) => (
                 <Link
                   key={`link=${idx}`}
                   href={navItem.link}
@@ -125,7 +135,7 @@ const Logo = () => {
       href="/"
       className="relative z-20 mr-4 flex items-center space-x-2 px-2 py-1 text-sm font-normal text-black"
     >
-      <img
+      <Image
         src="https://assets.aceternity.com/logo-dark.png"
         alt="logo"
         width={30}
