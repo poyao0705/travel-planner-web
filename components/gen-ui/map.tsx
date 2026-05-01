@@ -63,7 +63,7 @@ export function MapComponent() {
   //   return null;
   // }
   return (
-    <Card className="w-full max-w-2xl h-[320px] p-0 overflow-hidden">
+    <Card className="w-full max-w-2xl h-320px p-0 overflow-hidden">
       {/* <Map center={map?.center} zoom={map?.zoom}>
         <MapTileLayer />
         <MapZoomControl />
